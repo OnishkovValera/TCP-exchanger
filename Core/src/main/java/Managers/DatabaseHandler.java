@@ -88,6 +88,7 @@ public class DatabaseHandler {
             PreparedStatement statement = connection.prepareStatement("insert into peoples (name, password) VALUES (?, ?);");
             statement.setString(1, login);
             statement.setString(2,hashPassword(password));
+            statement.execute();
         } catch (SQLException e) {
             System.out.println("Cant add new client");
         }
@@ -95,22 +96,23 @@ public class DatabaseHandler {
     }
     public static boolean checkUser(String name){
         try {
-            PreparedStatement statement = connection.prepareStatement("select name from peoples where name = ?");
+            PreparedStatement statement = connection.prepareStatement("select name from peoples where name = ?;");
             statement.setString(1, name);
             ResultSet resultSet = statement.executeQuery();
             return resultSet.next();
         }catch (SQLException exception){
+            exception.printStackTrace();
             System.out.println("Something went wrong");
-            return true;
+            return false;
         }
     }
     public static String getPassword(String login){
         try {
-            PreparedStatement statement = connection.prepareStatement("select password from peoples where name = ?");
+            PreparedStatement statement = connection.prepareStatement("select password from peoples where name = ?;");
             statement.setString(1, login);
             ResultSet resultSet = statement.executeQuery();
             resultSet.next();
-            return resultSet.getString("name");
+            return resultSet.getString("password");
         }catch (SQLException exception){
             System.out.println("Something went wrong");
             return "no such name";

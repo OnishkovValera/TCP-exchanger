@@ -47,7 +47,7 @@ public class CollectionManager {
 
     public static void updateOtherCollections(SocketChannel socketChannel){
         for(SocketChannel channel: CollectionManager.getSessions().keySet()){
-            sessions.get(channel).setHashMap(sessions.get(socketChannel).getHashMap());
+            sessions.get(channel).setHashMap(DatabaseHandler.getHashmap());
         }
     }
 }

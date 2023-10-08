@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 public class RunServer {
     Logger logger = Logger.getLogger(RunServer.class.getName());
     public void run(Selector selector, ServerSocketChannel serverSocketChannel) throws IOException {
-        MessageHandler messageHandler = new MessageHandler(selector);
+        MessageHandler messageHandler = new MessageHandler();
         logger.log(Level.INFO, "Selector waiting");
 
         while (true){
@@ -29,6 +29,7 @@ public class RunServer {
                 if (handlingKey.isAcceptable()) {
                     messageHandler.connectClient(serverSocketChannel.accept());
                 }
+                iter.remove();
             }
         }
     }

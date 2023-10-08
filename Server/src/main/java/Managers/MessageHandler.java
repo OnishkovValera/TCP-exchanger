@@ -3,17 +3,16 @@ package Managers;
 import Threads.ClientThread;
 
 import java.io.IOException;
-import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class MessageHandler {
     Logger logger = Logger.getLogger(MessageHandler.class.getName());
-    private Selector selector;
 
 
-    public void connectClient(SocketChannel socketChannel) throws IOException {
+
+    public void connectClient(SocketChannel socketChannel) {
         ClientThread clientThread = new ClientThread();
         clientThread.setSocketChannel(socketChannel);
         clientThread.start();
@@ -32,14 +31,18 @@ public class MessageHandler {
                 String login = container.getLogin();
                 ContainerHandler.sendContainer(new Container(false, "Enter password"), handlingChannel);
                 container = ContainerHandler.readContainer(handlingChannel);
-
                 if(DatabaseHandler.getPassword(login).equals(DatabaseHandler.hashPassword(container.getPassword()))){
                     logger.log(Level.INFO, "user " + login + "has been authorized");
                     CollectionManager.getSession(handlingChannel).authorized = true;
+                    CollectionManager.getSession(handlingChannel).setLogin(login);
+                    ContainerHandler.sendContainer(new Container(false, "You has been authorized"), handlingChannel);
+
                 }else {
                     ContainerHandler.sendContainer(new Container(true, "password is wrong"), handlingChannel);
 
                 }
+            }else{
+                ContainerHandler.sendContainer(new Container(true, "No such loggin"), handlingChannel);
             }
 
         } else if(container.endConnection){
@@ -80,15 +83,6 @@ public class MessageHandler {
         logger.log(Level.INFO, "Sending a response");
     }
 
-    public Selector getSelector() {
-        return selector;
-    }
-
-    public void setSelector(Selector selector) {
-        this.selector = selector;
-    }
-
-    public MessageHandler(Selector selector) {
-        this.selector = selector;
+    public MessageHandler() {
     }
 }

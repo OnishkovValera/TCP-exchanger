@@ -76,7 +76,6 @@ public class Container implements Serializable {
     }
 
     public Container(String login){
-
         this.login = login;
     }
 

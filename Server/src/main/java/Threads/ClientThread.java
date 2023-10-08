@@ -5,12 +5,10 @@ import Managers.MessageHandler;
 import Managers.RunServer;
 
 import java.io.IOException;
-import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.logging.Logger;
 
 public class ClientThread extends Thread{
-    Selector selector;
     private SocketChannel socketChannel;
 
     public SocketChannel getSocketChannel() {
@@ -25,7 +23,7 @@ public class ClientThread extends Thread{
     public void run() {
         Logger logger = Logger.getLogger(RunServer.class.getName());
         CollectionManager.openSession(socketChannel);
-        MessageHandler messageHandler = new MessageHandler(selector);
+        MessageHandler messageHandler = new MessageHandler();
         while (true){
             try {
                 messageHandler.handleMessage(socketChannel);
