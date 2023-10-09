@@ -35,6 +35,7 @@ public class DatabaseHandler {
             ResultSet result = preparedStatement.executeQuery();
             while (result.next()) {
                 Integer id = result.getInt("id");
+                Integer key = result.getInt("key");
                 String owner = result.getString("owner");
                 String name = result.getString("name");
                 float x = result.getFloat("x");
@@ -45,7 +46,7 @@ public class DatabaseHandler {
                 VehicleType vehicleType = VehicleType.valueOf(result.getString("vehicletype").toUpperCase());
                 FuelType fuelType = FuelType.valueOf(result.getString("fueltype").toUpperCase());
                 Vehicle vehicle = new Vehicle(id, owner, name, new Coordinates(x, y), time, enginePower, capacity, vehicleType, fuelType);
-                hashMap.put(id, vehicle);
+                hashMap.put(key, vehicle);
                 System.out.println(vehicle);
             }
 
@@ -54,9 +55,9 @@ public class DatabaseHandler {
         }
         return hashMap;
     }
-    public static void addVehicle(Vehicle vehicle){
+    public static void addVehicle(int key, Vehicle vehicle){
         try {
-            PreparedStatement statement = connection.prepareStatement("insert into vehicles (owner, name, x, y, time, enginepower, capacity, vehicletype, fueltype) values (?,?,?,?,?,?,?,?,?);");
+            PreparedStatement statement = connection.prepareStatement("insert into vehicles (owner, name, x, y, time, enginepower, capacity, vehicletype, fueltype, key) values (?,?,?,?,?,?,?,?,?,?);");
             statement.setString(1, vehicle.getOwner());
             statement.setString(2, vehicle.getName());
             statement.setFloat(3, vehicle.getCoordinates().getX());
@@ -66,6 +67,7 @@ public class DatabaseHandler {
             statement.setDouble(7, vehicle.getCapacity());
             statement.setString(8, vehicle.getType().toString());
             statement.setString(9, vehicle.getFuelType().toString());
+            statement.setInt(10, key);
             statement.execute();
             System.out.println("Vehicle added");
         }catch (SQLException exception){
