@@ -1,16 +1,21 @@
 package Managers;
 
+import Threads.ClientHandler;
 import Threads.ClientThread;
 
 import java.io.IOException;
 import java.nio.channels.SocketChannel;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class MessageHandler {
     Logger logger = Logger.getLogger(MessageHandler.class.getName());
+    public static ForkJoinPool pool = new ForkJoinPool();
 
-
+    public static ExecutorService threadPool = Executors.newFixedThreadPool(10);
 
     public void connectClient(SocketChannel socketChannel) {
         ClientThread clientThread = new ClientThread();
@@ -24,6 +29,7 @@ public class MessageHandler {
         System.out.println(container.getLogin() + container.setNewClient);
         if(container.setNewClient) {
             addClient(container.getLogin(), handlingChannel);
+            CollectionManager.getSession(handlingChannel).setLogin(container.getLogin());
             CollectionManager.getSession(handlingChannel).authorized = true;
             logger.log(Level.INFO, "Creating new account " + handlingChannel.getRemoteAddress());
         }else if (!container.setNewClient & !CollectionManager.getSession(handlingChannel).authorized){
@@ -49,7 +55,7 @@ public class MessageHandler {
             disconnectClient(handlingChannel);
 
         }else{
-            ContainerHandler.sendContainer(container.getCommand().execute(container, handlingChannel), handlingChannel);
+            pool.execute(new ClientHandler(handlingChannel, container));
             logger.log(Level.INFO, "Sending response to client with address " + handlingChannel.getRemoteAddress() );
 
         }

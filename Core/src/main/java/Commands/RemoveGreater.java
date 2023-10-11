@@ -19,6 +19,7 @@ public class RemoveGreater extends AbstractCommand{
                 .filter(integer -> hashMap.get(integer).getEnginePower() < container.getHashMap().get(0).getEnginePower())
                 .toArray();
         int[] intKeys = Arrays.stream(keys).mapToInt(key -> Integer.parseInt(key.toString())).toArray();
+
         for(Integer key : intKeys){
             if(CollectionManager.getSession(socketChannel).getLogin().equals(CollectionManager.getSessionHashMap(socketChannel).get(key).getOwner())){
                 DatabaseHandler.removeVehicle(CollectionManager.getSessionHashMap(socketChannel).get(key).getId());

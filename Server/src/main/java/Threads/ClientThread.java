@@ -6,6 +6,7 @@ import Managers.RunServer;
 
 import java.io.IOException;
 import java.nio.channels.SocketChannel;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ClientThread extends Thread{
@@ -28,7 +29,9 @@ public class ClientThread extends Thread{
             try {
                 messageHandler.handleMessage(socketChannel);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                CollectionManager.closeSession(socketChannel);
+                logger.log(Level.INFO, "Connection closed");
+                break;
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
