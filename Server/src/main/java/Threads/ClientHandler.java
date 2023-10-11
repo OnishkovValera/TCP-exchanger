@@ -19,6 +19,6 @@ public class ClientHandler extends RecursiveAction {
     @Override
     protected void compute() {
         Container sendContainer  = container.getCommand().execute(container, socketChannel);
-        MessageHandler.threadPool.execute(new ThreadSender(container,socketChannel));
+        MessageHandler.threadPool.execute(new ThreadSender(sendContainer,socketChannel));
     }
 }
